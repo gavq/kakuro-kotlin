@@ -55,7 +55,7 @@ class DownAcrossCell(override val down: Int, override val across: Int) : ICell, 
     }
 }
 
-class ValueCell(val values: IntArray) : ICell {
+class ValueCell(var values: IntArray) : ICell {
     override fun toString(): String {
         return "ValueCell[" + values.joinToString(", ") + "]"
     }
@@ -71,15 +71,21 @@ class ValueCell(val values: IntArray) : ICell {
     }
 }
 
-fun da(d:Int, a: Int)= DownAcrossCell(d, a)
-fun d(d:Int)= DownCell(d)
-fun a(a:Int)= AcrossCell(a)
+fun da(d: Int, a: Int) = DownAcrossCell(d, a)
+fun d(d: Int) = DownCell(d)
+fun a(a: Int) = AcrossCell(a)
 fun e() = EmptyCell()
-fun v() = ValueCell(intArrayOf())
+fun v() = ValueCell(intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
 fun v(vararg args: Int) = ValueCell(args)
 
+fun drawRow(row: Array<ICell>): String {
+    return row.map { it.draw() }.joinToString("")
+}
+
+fun drawGrid(grid: Array<Array<ICell>>): String {
+    return grid.map { drawRow(it) }.joinToString("\n")
+}
+
 fun main(args: Array<String>) {
-    val grid = arrayOf(da(3, 4), v(), v(1, 2), d(4), e(), a(5), v(4), v(1))
-    val display = grid.map { it.draw() }.joinToString("")
-    println(display)
+
 }
