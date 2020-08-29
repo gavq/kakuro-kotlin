@@ -1,10 +1,6 @@
 fun pad2(n: Int): String {
     var s = "" + n
-    if (s.length < 2) {
-        return " $s"
-    } else {
-        return s
-    }
+    return if (s.length < 2) " $s" else s
 }
 
 interface ICell {
@@ -39,6 +35,51 @@ class DownCell(override val down: Int) : ICell, IDown {
     }
 }
 
+class AcrossCell(override val across: Int) : ICell, IAcross {
+    override fun toString(): String {
+        return "AcrossCell[$across]"
+    }
+
+    override fun draw(): String {
+        return "   --\\" + pad2(across) + "  "
+    }
+}
+
+class DownAcrossCell(override val down: Int, override val across: Int) : ICell, IDown, IAcross {
+    override fun toString(): String {
+        return "DownAcrossCell[${down}, ${across}]"
+    }
+
+    override fun draw(): String {
+        return "   " + pad2(down) + "\\" + pad2(across) + "  "
+    }
+}
+
+class ValueCell(val values: IntArray) : ICell {
+    override fun toString(): String {
+        return "ValueCell[" + values.joinToString(", ") + "]"
+    }
+
+    override fun draw(): String {
+        if (1 == values.size) {
+            return "     " + values[0] + "    "
+        } else {
+            return " " + intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                .map { if (values.contains(it)) "" + it else "." }
+                .joinToString("")
+        }
+    }
+}
+
+fun da(d:Int, a: Int)= DownAcrossCell(d, a)
+fun d(d:Int)= DownCell(d)
+fun a(a:Int)= AcrossCell(a)
+fun e() = EmptyCell()
+fun v() = ValueCell(intArrayOf())
+fun v(vararg args: Int) = ValueCell(args)
+
 fun main(args: Array<String>) {
-    println("Hello World!")
+    val grid = arrayOf(da(3, 4), v(), v(1, 2), d(4), e(), a(5), v(4), v(1))
+    val display = grid.map { it.draw() }.joinToString("")
+    println(display)
 }
