@@ -110,7 +110,7 @@ internal class MainKtTest {
     fun testConcat() {
         val a = listOf(1, 2, 3)
         val b = listOf(4, 5, 6, 1, 2, 3)
-        val result = concatLists(a, b)
+        val result = a + b
         assertEquals(9, result.size)
     }
 
@@ -294,25 +294,5 @@ internal class MainKtTest {
         assertEquals("   --\\ 9       8         1       --\\ 6       1         5    \n", drawRow(result[4]))
         assertEquals("   --\\15       9         6       --\\12       3         9    \n", drawRow(result[5]))
     }
-
-//    @Test
-//    fun drawGrid() {
-//        var grid = arrayOf(
-//            arrayOf(e(), d(4), d(22), e(), d(16), d(3)),
-//            arrayOf(a(3), v(), v(), da(16, 6), v(), v()),
-//            arrayOf(a(18), v(), v(), v(), v(), v()),
-//            arrayOf(e(), da(17, 23), v(), v(), v(), d(14)),
-//            arrayOf(a(9), v(), v(), a(6), v(), v()),
-//            arrayOf(a(15), v(), v(), a(12), v(), v())
-//        )
-//        val result = drawGrid(grid)
-//        println(result)
-//        val expected = "   --\\ 3       1         2       16\\ 6       4         2    \n" +
-//                       "   --\\18       3         5         7         2         1    \n" +
-//                       "   -----     17\\23       8         9         6       14\\--  \n" +
-//                       "   --\\ 9       8         1       --\\ 6       1         5    \n" +
-//                       "   --\\15       9         6       --\\12       3         9    \n"
-//        assertEquals(expected, result)
-//    }
 
 }

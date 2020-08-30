@@ -74,30 +74,23 @@ fun <T> conj(items: List<T>, item: T): List<T> {
     return result
 }
 
-fun <T> concatLists(a: List<T>, b: List<T>): List<T> {
-    return listOf(a, b).flatten()
-}
-
 fun <T> product(colls: List<Set<T>>): List<List<T>> {
     return when (colls.size) {
         0 -> emptyList()
-        1 -> colls[0].map { listOf(it) }.toList()
+        1 -> colls[0].map { listOf(it) }
         else -> {
             val head = colls[0]
             val tail = colls.drop(1)
             val tailProd = product(tail)
-            return head.flatMap { x ->
-                tailProd.map { concatLists(listOf(x), it) }
-            }.toList()
+            return head.flatMap { x -> tailProd.map { listOf(x) + it } }
         }
     }
 }
 
 fun permuteAll(vs: List<ValueCell>, target: Int): List<List<Int>> {
-    val values = vs.map { it.values }.toList()
+    val values = vs.map { it.values }
     return product(values)
         .filter { target == it.sum() }
-        .toList()
 }
 
 fun isPossible(v: ValueCell, n: Int): Boolean {
@@ -109,8 +102,7 @@ fun <T> transpose(m: List<List<T>>): List<List<T>> {
         emptyList()
     } else {
         (1..m[0].size)
-            .map { m.map { col -> col[it - 1] }.toList() }
-            .toList()
+            .map { m.map { col -> col[it - 1] } }
     }
 }
 
@@ -121,7 +113,7 @@ fun <T> partitionBy(f: (T) -> Boolean, coll: List<T>): List<List<T>> {
         val head = coll[0]
         val fx = f(head)
         val group = coll.takeWhile { fx == f(it) }
-        concatLists(listOf(group), partitionBy(f, coll.drop(group.size)))
+        listOf(group) + partitionBy(f, coll.drop(group.size))
     }
 }
 
@@ -129,23 +121,18 @@ fun <T> partitionAll(n: Int, step: Int, coll: List<T>): List<List<T>> {
     return if (coll.isEmpty()) {
         emptyList()
     } else {
-        concatLists(listOf(coll.take(n)), partitionAll(n, step, coll.drop(step)))
+        listOf(coll.take(n)) + partitionAll(n, step, coll.drop(step))
     }
 }
 
-fun <T> partitionN(n: Int, coll: List<T>): List<List<T>> {
-    return partitionAll(n, n, coll)
-}
+fun <T> partitionN(n: Int, coll: List<T>): List<List<T>> = partitionAll(n, n, coll)
 
 fun solveStep(cells: List<ValueCell>, total: Int): List<ValueCell> {
     val finalIndex = cells.size - 1
     val perms = permuteAll(cells, total)
         .filter { isPossible(cells.last(), it[finalIndex]) }
         .filter { allDifferent(it) }
-        .toList()
-    return transpose(perms)
-        .map { v(it) }
-        .toList()
+    return transpose(perms).map { v(it) }
 }
 
 fun gatherValues(line: List<ICell>): List<List<ICell>> {
@@ -157,17 +144,17 @@ fun pairTargetsWithValues(line: List<ICell>): List<Pair<List<ICell>, List<ICell>
         .map {
             Pair(it[0], if (1 == it.size) emptyList() else it[1])
         }
-        .toList()
 }
 
-fun solvePair(f: (ICell) -> Int, pair: Pair<List<ICell>, List<ICell>>): List<ICell> {
+fun solvePair(accessor: (ICell) -> Int, pair: Pair<List<ICell>, List<ICell>>): List<ICell> {
     val notValueCells = pair.first
     return if (pair.second.isEmpty()) {
         notValueCells
     } else {
         val valueCells = pair.second.map { it as ValueCell }
-        val newValueCells = solveStep(valueCells, f(notValueCells.last()))
-        concatLists(notValueCells, newValueCells)
+        val total = accessor(notValueCells.last())
+        val newValueCells = solveStep(valueCells, total)
+        notValueCells + newValueCells
     }
 }
 
@@ -175,7 +162,6 @@ fun solveLine(line: List<ICell>, f: (ICell) -> Int): List<ICell> {
     return pairTargetsWithValues(line)
         .map { solvePair(f, it) }
         .flatten()
-        .toList()
 }
 
 fun solveRow(row: List<ICell>): List<ICell> {
@@ -187,12 +173,8 @@ fun solveColumn(column: List<ICell>): List<ICell> {
 }
 
 fun solveGrid(grid: List<List<ICell>>): List<List<ICell>> {
-    val rowsDone = grid
-        .map(::solveRow)
-        .toList()
-    val colsDone = transpose(rowsDone)
-        .map(::solveColumn)
-        .toList()
+    val rowsDone = grid.map(::solveRow)
+    val colsDone = transpose(rowsDone).map(::solveColumn)
     return transpose(colsDone)
 }
 
