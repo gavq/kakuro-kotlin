@@ -150,6 +150,12 @@ internal class MainKtTest {
         assertEquals(3, result!!.size)
     }
 
+    @Test
+    fun testSolveStep() {
+        val result = solveStep(listOf(v(1, 2), v()), 5)
+        assertEquals(v(1, 2), result[0])
+        assertEquals(v(3, 4), result[1])
+    }
 //    @Test
 //    fun drawGrid() {
 //        var grid = arrayOf(

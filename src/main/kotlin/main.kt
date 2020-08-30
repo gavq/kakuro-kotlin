@@ -1,5 +1,5 @@
 fun pad2(n: Int): String {
-    var s = "" + n
+    val s = "" + n
     return if (s.length < 2) " $s" else s
 }
 
@@ -43,12 +43,12 @@ data class DownAcrossCell(override val down: Int, override val across: Int) : IC
     }
 }
 
-data class ValueCell(var values: Set<Int>) : ICell {
+data class ValueCell(val values: Set<Int>) : ICell {
     override fun draw(): String {
         if (1 == values.size) {
             return "     " + values.first() + "    "
         } else {
-            return " " + intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
+            return " " + (1..9)
                 .map { if (values.contains(it)) "" + it else "." }
                 .joinToString("")
         }
@@ -61,6 +61,7 @@ fun a(a: Int) = AcrossCell(a)
 fun e() = EmptyCell()
 fun v() = ValueCell(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
 fun v(vararg args: Int) = ValueCell(args.toSet())
+fun v(args: List<Int>) = ValueCell(args.toSet())
 
 fun drawRow(row: Array<ICell>): String {
     return row.map { it.draw() }.joinToString("") + "\n"
@@ -87,9 +88,7 @@ fun <T> concatLists(a: List<T>, b: List<T>): List<T> {
 fun <T> product(colls: List<Set<T>>): List<List<T>> {
     return when (colls.size) {
         0 -> emptyList()
-        1 -> colls[0]
-            .map { listOf(it) }
-            .toList()
+        1 -> colls[0].map { listOf(it) }.toList()
         else -> {
             val head = colls[0]
             val tail = colls.drop(1)
@@ -129,7 +128,7 @@ fun <T> partitionBy(f: (T) -> Boolean, coll: List<T>): List<List<T>> {
         val head = coll[0]
         val fx = f(head)
         val group = coll.takeWhile { fx == f(it) }
-        concatLists(listOf(group), partitionBy<T>(f, coll.drop(group.size)))
+        concatLists(listOf(group), partitionBy(f, coll.drop(group.size)))
     }
 }
 
@@ -141,8 +140,19 @@ fun <T> partitionAll(n: Int, step: Int, coll: List<T>): List<List<T>> {
     }
 }
 
-fun <T> partitionN(n: Int, coll: List<T>): List<List<T>?>? {
+fun <T> partitionN(n: Int, coll: List<T>): List<List<T>> {
     return partitionAll(n, n, coll)
+}
+
+fun solveStep(cells: List<ValueCell>, total: Int): List<ValueCell> {
+    val finalIndex = cells.size - 1
+    val perms = permuteAll(cells, total)
+        .filter { v -> isPossible(cells.last(), v[finalIndex]) }
+        .filter { allDifferent(it) }
+        .toList()
+    return transpose(perms)
+        .map { v(it) }
+        .toList()
 }
 
 fun main(args: Array<String>) {
