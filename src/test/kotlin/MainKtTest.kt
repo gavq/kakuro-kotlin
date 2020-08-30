@@ -191,6 +191,31 @@ internal class MainKtTest {
         assertEquals(v(1, 2), result[2])
     }
 
+    @Test
+    fun testSolveLine() {
+        val line = listOf(da(3, 4), v(), v(), d(4), e(), a(5), v(), v())
+        val result = solveLine(line) { x -> (x as IAcross).across }
+        assertEquals(8, result.size)
+        assertEquals(v(1, 3), result[1])
+        assertEquals(v(1, 3), result[2])
+        assertEquals(v(1, 2, 3, 4), result[6])
+        assertEquals(v(1, 2, 3, 4), result[7])
+    }
+
+    @Test
+    fun testSolveRow() {
+        val result = solveRow(listOf(a(3), v(1, 2, 3), v(1)))
+        assertEquals(v(2), result[1])
+        assertEquals(v(1), result[2])
+    }
+
+    @Test
+    fun testSolveCol() {
+        val result = solveColumn(listOf(da(3, 12), v(1, 2, 3), v(1)))
+        assertEquals(v(2), result[1])
+        assertEquals(v(1), result[2])
+    }
+
 //    @Test
 //    fun drawGrid() {
 //        var grid = arrayOf(

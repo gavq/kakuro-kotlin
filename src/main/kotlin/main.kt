@@ -1,4 +1,3 @@
-
 import java.util.stream.Collectors.toList
 
 
@@ -172,7 +171,7 @@ fun pairTargetsWithValues(line: List<ICell>): List<Pair<List<ICell>, List<ICell>
         .toList()
 }
 
-fun solvePair(f: (ICell) -> Int, pair: Pair<List<ICell>,List<ICell>>): List<ICell> {
+fun solvePair(f: (ICell) -> Int, pair: Pair<List<ICell>, List<ICell>>): List<ICell> {
     val notValueCells = pair.first
     return if (pair.second.isEmpty()) {
         notValueCells
@@ -181,6 +180,21 @@ fun solvePair(f: (ICell) -> Int, pair: Pair<List<ICell>,List<ICell>>): List<ICel
         val newValueCells = solveStep(valueCells, f(notValueCells.last()))
         concatLists(notValueCells, newValueCells)
     }
+}
+
+fun solveLine(line: List<ICell>, f:(ICell) -> Int): List<ICell> {
+    return pairTargetsWithValues(line)
+        .map { pair -> solvePair(f, pair) }
+        .flatMap { obj -> obj }
+        .toList()
+}
+
+fun solveRow(row: List<ICell>): List<ICell> {
+    return solveLine(row, { x -> (x as IAcross).across })
+}
+
+fun solveColumn(column: List<ICell>): List<ICell> {
+    return solveLine(column, { x -> (x as IDown).down })
 }
 
 fun main(args: Array<String>) {
