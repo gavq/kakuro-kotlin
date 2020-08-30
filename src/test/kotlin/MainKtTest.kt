@@ -40,7 +40,7 @@ internal class MainKtTest {
 
     @Test
     fun drawRow() {
-        val row = arrayOf(da(3, 4), v(), v(1, 2), d(4), e(), a(5), v(4), v(1))
+        val row = listOf(da(3, 4), v(), v(1, 2), d(4), e(), a(5), v(4), v(1))
         val result = drawRow(row)
         println(result)
         val expected = "    3\\ 4   123456789 12.......    4\\--     -----     --\\ 5       4         1    \n"
@@ -214,6 +214,86 @@ internal class MainKtTest {
         val result = solveColumn(listOf(da(3, 12), v(1, 2, 3), v(1)))
         assertEquals(v(2), result[1])
         assertEquals(v(1), result[2])
+    }
+
+    @Test
+    fun testGridEquals() {
+        val grid1 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16), d(3)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(9), v(), v(), a(6), v(), v()),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        val grid2 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16), d(3)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(9), v(), v(), a(6), v(), v()),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        assertTrue(gridEquals(grid1, grid2))
+    }
+
+    @Test
+    fun testGridEquals2() {
+        val grid1 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16), d(3)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(9), v(), v(), a(6), v(), v()),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        val grid2 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16), d(3)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        assertFalse(gridEquals(grid1, grid2))
+    }
+
+    @Test
+    fun testGridEquals3() {
+        val grid1 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16), d(3)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(9), v(), v(), a(6), v(), v()),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        val grid2 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(9), v(), v(), a(6), v(), v()),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        assertFalse(gridEquals(grid1, grid2))
+    }
+
+    @Test
+    fun testSolver() {
+        val grid1 = listOf(
+            listOf(e(), d(4), d(22), e(), d(16), d(3)),
+            listOf(a(3), v(), v(), da(16, 6), v(), v()),
+            listOf(a(18), v(), v(), v(), v(), v()),
+            listOf(e(), da(17, 23), v(), v(), v(), d(14)),
+            listOf(a(9), v(), v(), a(6), v(), v()),
+            listOf(a(15), v(), v(), a(12), v(), v())
+        )
+        val result = solver(grid1)
+        assertEquals("   --\\ 3       1         2       16\\ 6       4         2    \n", drawRow(result!![1]))
+        assertEquals("   --\\18       3         5         7         2         1    \n", drawRow(result[2]))
+        assertEquals("   -----     17\\23       8         9         6       14\\--  \n", drawRow(result[3]))
+        assertEquals("   --\\ 9       8         1       --\\ 6       1         5    \n", drawRow(result[4]))
+        assertEquals("   --\\15       9         6       --\\12       3         9    \n", drawRow(result[5]))
     }
 
 //    @Test

@@ -1,6 +1,3 @@
-import java.util.stream.Collectors.toList
-
-
 fun pad2(n: Int): String {
     val s = "" + n
     return if (s.length < 2) " $s" else s
@@ -49,10 +46,10 @@ data class DownAcrossCell(override val down: Int, override val across: Int) : IC
 
 data class ValueCell(val values: Set<Int>) : ICell {
     override fun draw(): String {
-        if (1 == values.size) {
-            return "     " + values.first() + "    "
+        return if (1 == values.size) {
+            "     " + values.first() + "    "
         } else {
-            return " " + (1..9)
+            " " + (1..9)
                 .map { if (values.contains(it)) "" + it else "." }
                 .joinToString("")
         }
@@ -67,11 +64,11 @@ fun v() = ValueCell(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
 fun v(vararg args: Int) = ValueCell(args.toSet())
 fun v(args: List<Int>) = ValueCell(args.toSet())
 
-fun drawRow(row: Array<ICell>): String {
+fun drawRow(row: Collection<ICell>): String {
     return row.map { it.draw() }.joinToString("") + "\n"
 }
 
-fun drawGrid(grid: Array<Array<ICell>>): String {
+fun drawGrid(grid: Collection<Collection<ICell>>): String {
     return grid.map { drawRow(it) }.joinToString()
 }
 
@@ -98,7 +95,7 @@ fun <T> product(colls: List<Set<T>>): List<List<T>> {
             val tail = colls.drop(1)
             val tailProd = product(tail)
             return head.flatMap { x ->
-                tailProd.map { ys -> concatLists(listOf(x), ys) }
+                tailProd.map { concatLists(listOf(x), it) }
             }.toList()
         }
     }
@@ -107,7 +104,7 @@ fun <T> product(colls: List<Set<T>>): List<List<T>> {
 fun permuteAll(vs: List<ValueCell>, target: Int): List<List<Int>> {
     val values = vs.map { it.values }.toList()
     return product(values)
-        .filter { x -> target == x.sum() }
+        .filter { target == it.sum() }
         .toList()
 }
 
@@ -120,7 +117,7 @@ fun <T> transpose(m: List<List<T>>): List<List<T>> {
         emptyList()
     } else {
         (1..m[0].size)
-            .map { i -> m.map { col -> col[i - 1] }.toList() }
+            .map { m.map { col -> col[it - 1] }.toList() }
             .toList()
     }
 }
@@ -151,7 +148,7 @@ fun <T> partitionN(n: Int, coll: List<T>): List<List<T>> {
 fun solveStep(cells: List<ValueCell>, total: Int): List<ValueCell> {
     val finalIndex = cells.size - 1
     val perms = permuteAll(cells, total)
-        .filter { v -> isPossible(cells.last(), v[finalIndex]) }
+        .filter { isPossible(cells.last(), it[finalIndex]) }
         .filter { allDifferent(it) }
         .toList()
     return transpose(perms)
@@ -160,13 +157,12 @@ fun solveStep(cells: List<ValueCell>, total: Int): List<ValueCell> {
 }
 
 fun gatherValues(line: List<ICell>): List<List<ICell>> {
-    return partitionBy({ v -> v is ValueCell }, line)
+    return partitionBy({ it is ValueCell }, line)
 }
 
 fun pairTargetsWithValues(line: List<ICell>): List<Pair<List<ICell>, List<ICell>>> {
     return partitionN(2, gatherValues(line))
-        .map { part ->
-            Pair(part[0], if (1 == part.size) emptyList() else part[1])
+        .map { Pair(it[0], if (1 == it.size) emptyList() else it[1])
         }
         .toList()
 }
@@ -176,25 +172,54 @@ fun solvePair(f: (ICell) -> Int, pair: Pair<List<ICell>, List<ICell>>): List<ICe
     return if (pair.second.isEmpty()) {
         notValueCells
     } else {
-        val valueCells = pair.second.map { v -> v as ValueCell}
+        val valueCells = pair.second.map { it as ValueCell }
         val newValueCells = solveStep(valueCells, f(notValueCells.last()))
         concatLists(notValueCells, newValueCells)
     }
 }
 
-fun solveLine(line: List<ICell>, f:(ICell) -> Int): List<ICell> {
+fun solveLine(line: List<ICell>, f: (ICell) -> Int): List<ICell> {
     return pairTargetsWithValues(line)
-        .map { pair -> solvePair(f, pair) }
-        .flatMap { obj -> obj }
+        .map { solvePair(f, it) }
+        .flatten()
         .toList()
 }
 
 fun solveRow(row: List<ICell>): List<ICell> {
-    return solveLine(row, { x -> (x as IAcross).across })
+    return solveLine(row, { (it as IAcross).across })
 }
 
 fun solveColumn(column: List<ICell>): List<ICell> {
-    return solveLine(column, { x -> (x as IDown).down })
+    return solveLine(column, { (it as IDown).down })
+}
+
+fun solveGrid(grid: List<List<ICell>>): List<List<ICell>> {
+    val rowsDone = grid
+        .map(::solveRow)
+        .toList()
+    val colsDone = transpose(rowsDone)
+        .map(::solveColumn)
+        .toList()
+    return transpose(colsDone)
+}
+
+fun gridEquals(g1: List<List<ICell>>, g2: List<List<ICell>>): Boolean {
+    return if (g1.size == g2.size) {
+        val limit = g1.size - 1
+        (0..limit).all { g1[it] == g2[it] }
+    } else {
+        false
+    }
+}
+
+fun solver(grid: List<List<ICell>>): List<List<ICell>>? {
+    println(drawGrid(grid))
+    val g = solveGrid(grid)
+    return if (gridEquals(g, grid)) {
+        g
+    } else {
+        solver(g)
+    }
 }
 
 fun main(args: Array<String>) {
