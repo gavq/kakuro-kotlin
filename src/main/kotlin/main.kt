@@ -1,3 +1,7 @@
+
+import java.util.stream.Collectors.toList
+
+
 fun pad2(n: Int): String {
     val s = "" + n
     return if (s.length < 2) " $s" else s
@@ -15,7 +19,8 @@ interface IAcross {
     val across: Int
 }
 
-class EmptyCell : ICell {
+// singleton
+object EmptyCell : ICell {
     override fun toString(): String {
         return "EmptyCell"
     }
@@ -58,7 +63,7 @@ data class ValueCell(val values: Set<Int>) : ICell {
 fun da(d: Int, a: Int) = DownAcrossCell(d, a)
 fun d(d: Int) = DownCell(d)
 fun a(a: Int) = AcrossCell(a)
-fun e() = EmptyCell()
+fun e() = EmptyCell
 fun v() = ValueCell(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
 fun v(vararg args: Int) = ValueCell(args.toSet())
 fun v(args: List<Int>) = ValueCell(args.toSet())
@@ -153,6 +158,29 @@ fun solveStep(cells: List<ValueCell>, total: Int): List<ValueCell> {
     return transpose(perms)
         .map { v(it) }
         .toList()
+}
+
+fun gatherValues(line: List<ICell>): List<List<ICell>> {
+    return partitionBy({ v -> v is ValueCell }, line)
+}
+
+fun pairTargetsWithValues(line: List<ICell>): List<Pair<List<ICell>, List<ICell>>> {
+    return partitionN(2, gatherValues(line))
+        .map { part ->
+            Pair(part[0], if (1 == part.size) emptyList() else part[1])
+        }
+        .toList()
+}
+
+fun solvePair(f: (ICell) -> Int, pair: Pair<List<ICell>,List<ICell>>): List<ICell> {
+    val notValueCells = pair.first
+    return if (pair.second.isEmpty()) {
+        notValueCells
+    } else {
+        val valueCells = pair.second.map { v -> v as ValueCell}
+        val newValueCells = solveStep(valueCells, f(notValueCells.last()))
+        concatLists(notValueCells, newValueCells)
+    }
 }
 
 fun main(args: Array<String>) {

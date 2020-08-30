@@ -147,7 +147,7 @@ internal class MainKtTest {
     fun testPartN() {
         val data = listOf(1, 2, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9)
         val result = partitionN(5, data)
-        assertEquals(3, result!!.size)
+        assertEquals(3, result.size)
     }
 
     @Test
@@ -156,6 +156,41 @@ internal class MainKtTest {
         assertEquals(v(1, 2), result[0])
         assertEquals(v(3, 4), result[1])
     }
+
+
+    @Test
+    fun testGatherValues() {
+        val line = listOf(da(3, 4), v(), v(), d(4), e(), a(4), v(), v())
+        val result = gatherValues(line)
+        assertEquals(4, result.size)
+        assertEquals(da(3, 4), result[0][0])
+        assertEquals(d(4), result[2][0])
+        assertEquals(e(), result[2][1])
+        assertEquals(a(4), result[2][2])
+    }
+
+    @Test
+    fun testPairTargets() {
+        val line = listOf(da(3, 4), v(), v(), d(4), e(), a(4), v(), v())
+        val result = pairTargetsWithValues(line)
+        assertEquals(2, result.size)
+        assertEquals(da(3, 4), result[0].first[0])
+        assertEquals(d(4), result[1].first[0])
+        assertEquals(e(), result[1].first[1])
+        assertEquals(a(4), result[1].first[2])
+    }
+
+    @Test
+    fun testSolvePair() {
+        val line = listOf(da(3, 4), v(), v(), d(4), e(), a(4), v(), v())
+        val pairs = pairTargetsWithValues(line)
+        val pair = pairs[0]
+        val result = solvePair({ cell -> (cell as IDown).down }, pair)
+        assertEquals(3, result.size)
+        assertEquals(v(1, 2), result[1])
+        assertEquals(v(1, 2), result[2])
+    }
+
 //    @Test
 //    fun drawGrid() {
 //        var grid = arrayOf(
