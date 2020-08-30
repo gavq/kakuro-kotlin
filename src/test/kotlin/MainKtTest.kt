@@ -4,11 +4,43 @@ import kotlin.test.assertEquals
 internal class MainKtTest {
 
     @Test
+    fun testDrawEmpty() {
+        val result = e().draw()
+        assertEquals("   -----  ", result)
+    }
+
+    @Test
+    fun testDrawAcross() {
+        val result = a(5).draw()
+        assertEquals("   --\\ 5  ", result)
+    }
+
+    @Test
+    fun testDrawDown() {
+        val result = d(4).draw()
+        assertEquals("    4\\--  ", result)
+    }
+
+    @Test
+    fun testDrawDownAcross() {
+        val result = da(3, 4).draw()
+        assertEquals("    3\\ 4  ", result)
+    }
+
+    @Test
+    fun testDrawValues() {
+        val result = v().draw()
+        assertEquals(" 123456789", result)
+        val result12 = v(1, 2).draw()
+        assertEquals(" 12.......", result12)
+    }
+
+    @Test
     fun drawRow() {
         val row = arrayOf(da(3, 4), v(), v(1, 2), d(4), e(), a(5), v(4), v(1))
         val result = drawRow(row)
         println(result)
-        val expected = "    3\\ 4   123456789 12.......    4\\--     -----     --\\ 5       4         1    "
+        val expected = "    3\\ 4   123456789 12.......    4\\--     -----     --\\ 5       4         1    \n"
         assertEquals(expected, result)
     }
 

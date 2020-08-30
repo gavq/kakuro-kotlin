@@ -79,11 +79,11 @@ fun v() = ValueCell(intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
 fun v(vararg args: Int) = ValueCell(args)
 
 fun drawRow(row: Array<ICell>): String {
-    return row.map { it.draw() }.joinToString("")
+    return row.map { it.draw() }.joinToString("") + "\n"
 }
 
 fun drawGrid(grid: Array<Array<ICell>>): String {
-    return grid.map { drawRow(it) }.joinToString("\n")
+    return grid.map { drawRow(it) }.joinToString()
 }
 
 fun main(args: Array<String>) {
