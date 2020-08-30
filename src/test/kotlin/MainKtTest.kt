@@ -44,6 +44,20 @@ internal class MainKtTest {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun testProduct() {
+        val data = listOf(setOf(1, 2), setOf(10), setOf(100, 200, 300))
+        val expected = listOf(
+            listOf(1, 10, 100),
+            listOf(1, 10, 200),
+            listOf(1, 10, 300),
+            listOf(2, 10, 100),
+            listOf(2, 10, 200),
+            listOf(2, 10, 300)
+        )
+        assertEquals(expected, product(data))
+    }
+
 //    @Test
 //    fun drawGrid() {
 //        var grid = arrayOf(

@@ -1,3 +1,4 @@
+
 fun pad2(n: Int): String {
     var s = "" + n
     return if (s.length < 2) " $s" else s
@@ -84,6 +85,38 @@ fun drawRow(row: Array<ICell>): String {
 
 fun drawGrid(grid: Array<Array<ICell>>): String {
     return grid.map { drawRow(it) }.joinToString()
+}
+
+fun <T> allDifferent(nums: Collection<T>): Boolean {
+    return nums.size == HashSet(nums).size
+}
+
+fun <T> conj(items: List<T>, item: T): List<T> {
+    val result = ArrayList(items)
+    result.add(item)
+    return result
+}
+
+fun <T> concatLists(a: List<T>, b: List<T>): List<T> {
+    return listOf(a, b).flatten()
+}
+
+fun <T> product(colls: List<Set<T>>): List<List<T>> {
+    return when (colls.size) {
+        0 -> emptyList()
+        1 -> colls[0]
+            .map { listOf(it) }
+            .toList()
+        else -> {
+            val head = colls[0]
+            val tail = colls.drop(1)
+            val tailProd = product(tail)
+            return head.flatMap { x ->
+                tailProd.map { ys -> concatLists(listOf(x), ys) }
+            }
+                .toList()
+        }
+    }
 }
 
 fun main(args: Array<String>) {
