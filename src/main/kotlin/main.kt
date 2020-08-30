@@ -1,3 +1,6 @@
+import java.util.function.ToIntFunction
+import java.util.stream.Collectors.toList
+
 
 fun pad2(n: Int): String {
     var s = "" + n
@@ -56,14 +59,14 @@ class DownAcrossCell(override val down: Int, override val across: Int) : ICell, 
     }
 }
 
-class ValueCell(var values: IntArray) : ICell {
+class ValueCell(var values: Set<Int>) : ICell {
     override fun toString(): String {
         return "ValueCell[" + values.joinToString(", ") + "]"
     }
 
     override fun draw(): String {
         if (1 == values.size) {
-            return "     " + values[0] + "    "
+            return "     " + values.first() + "    "
         } else {
             return " " + intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
                 .map { if (values.contains(it)) "" + it else "." }
@@ -76,8 +79,8 @@ fun da(d: Int, a: Int) = DownAcrossCell(d, a)
 fun d(d: Int) = DownCell(d)
 fun a(a: Int) = AcrossCell(a)
 fun e() = EmptyCell()
-fun v() = ValueCell(intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
-fun v(vararg args: Int) = ValueCell(args)
+fun v() = ValueCell(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
+fun v(vararg args: Int) = ValueCell(args.toSet())
 
 fun drawRow(row: Array<ICell>): String {
     return row.map { it.draw() }.joinToString("") + "\n"
@@ -117,6 +120,13 @@ fun <T> product(colls: List<Set<T>>): List<List<T>> {
                 .toList()
         }
     }
+}
+
+fun permuteAll(vs: List<ValueCell>, target: Int): List<List<Int>> {
+    val values = vs.map { it.values }.toList()
+    return product(values)
+        .filter { x -> target == x.sum() }
+        .toList()
 }
 
 fun main(args: Array<String>) {

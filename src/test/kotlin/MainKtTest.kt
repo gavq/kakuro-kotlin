@@ -1,5 +1,7 @@
 import org.junit.Test
+import java.util.stream.Collectors.toList
 import kotlin.test.assertEquals
+
 
 internal class MainKtTest {
 
@@ -56,6 +58,17 @@ internal class MainKtTest {
             listOf(2, 10, 300)
         )
         assertEquals(expected, product(data))
+    }
+
+    @Test
+    fun testPermute() {
+        val vs = listOf(v(), v(), v())
+        val results = permuteAll(vs, 6)
+        assertEquals(10, results.size)
+        val diff = results
+            .filter(::allDifferent)
+            .toList()
+        assertEquals(6, diff.size)
     }
 
 //    @Test
