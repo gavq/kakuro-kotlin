@@ -69,9 +69,7 @@ fun <T> allDifferent(nums: Collection<T>): Boolean {
 }
 
 fun <T> conj(items: List<T>, item: T): List<T> {
-    val result = ArrayList(items)
-    result.add(item)
-    return result
+    return items + listOf(item)
 }
 
 fun <T> product(colls: List<Set<T>>): List<List<T>> {
@@ -187,7 +185,7 @@ fun gridEquals(g1: List<List<ICell>>, g2: List<List<ICell>>): Boolean {
     }
 }
 
-fun solver(grid: List<List<ICell>>): List<List<ICell>>? {
+fun solver(grid: List<List<ICell>>): List<List<ICell>> {
     println(drawGrid(grid))
     val g = solveGrid(grid)
     return if (gridEquals(g, grid)) {

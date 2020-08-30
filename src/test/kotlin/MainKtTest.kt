@@ -288,7 +288,7 @@ internal class MainKtTest {
             listOf(a(15), v(), v(), a(12), v(), v())
         )
         val result = solver(grid1)
-        assertEquals("   --\\ 3       1         2       16\\ 6       4         2    \n", drawRow(result!![1]))
+        assertEquals("   --\\ 3       1         2       16\\ 6       4         2    \n", drawRow(result[1]))
         assertEquals("   --\\18       3         5         7         2         1    \n", drawRow(result[2]))
         assertEquals("   -----     17\\23       8         9         6       14\\--  \n", drawRow(result[3]))
         assertEquals("   --\\ 9       8         1       --\\ 6       1         5    \n", drawRow(result[4]))
