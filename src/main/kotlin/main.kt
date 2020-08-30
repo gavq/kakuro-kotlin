@@ -17,31 +17,21 @@ interface IAcross {
 
 // singleton
 object EmptyCell : ICell {
-    override fun toString(): String {
-        return "EmptyCell"
-    }
+    override fun toString() = "EmptyCell"
 
-    override fun draw(): String {
-        return "   -----  "
-    }
+    override fun draw() = "   -----  "
 }
 
 data class DownCell(override val down: Int) : ICell, IDown {
-    override fun draw(): String {
-        return "   " + pad2(down) + "\\--  "
-    }
+    override fun draw() = "   " + pad2(down) + "\\--  "
 }
 
 data class AcrossCell(override val across: Int) : ICell, IAcross {
-    override fun draw(): String {
-        return "   --\\" + pad2(across) + "  "
-    }
+    override fun draw() = "   --\\" + pad2(across) + "  "
 }
 
 data class DownAcrossCell(override val down: Int, override val across: Int) : ICell, IDown, IAcross {
-    override fun draw(): String {
-        return "   " + pad2(down) + "\\" + pad2(across) + "  "
-    }
+    override fun draw() = "   " + pad2(down) + "\\" + pad2(across) + "  "
 }
 
 data class ValueCell(val values: Set<Int>) : ICell {
@@ -49,11 +39,13 @@ data class ValueCell(val values: Set<Int>) : ICell {
         return if (1 == values.size) {
             "     " + values.first() + "    "
         } else {
-            " " + (1..9)
-                .map { if (values.contains(it)) "" + it else "." }
-                .joinToString("")
+            (1..9)
+                .map { drawOneValue(it) }
+                .joinToString(separator = "", prefix = " ")
         }
     }
+
+    private fun drawOneValue(it: Int) = if (it in values) "" + it else "."
 }
 
 fun da(d: Int, a: Int) = DownAcrossCell(d, a)
@@ -65,7 +57,7 @@ fun v(vararg args: Int) = ValueCell(args.toSet())
 fun v(args: List<Int>) = ValueCell(args.toSet())
 
 fun drawRow(row: Collection<ICell>): String {
-    return row.map { it.draw() }.joinToString("") + "\n"
+    return row.map { it.draw() }.joinToString(separator = "", postfix = "\n")
 }
 
 fun drawGrid(grid: Collection<Collection<ICell>>): String {
@@ -162,7 +154,8 @@ fun gatherValues(line: List<ICell>): List<List<ICell>> {
 
 fun pairTargetsWithValues(line: List<ICell>): List<Pair<List<ICell>, List<ICell>>> {
     return partitionN(2, gatherValues(line))
-        .map { Pair(it[0], if (1 == it.size) emptyList() else it[1])
+        .map {
+            Pair(it[0], if (1 == it.size) emptyList() else it[1])
         }
         .toList()
 }
@@ -222,6 +215,3 @@ fun solver(grid: List<List<ICell>>): List<List<ICell>>? {
     }
 }
 
-fun main(args: Array<String>) {
-
-}

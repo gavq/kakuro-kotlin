@@ -3,7 +3,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-
 internal class MainKtTest {
 
     @Test
