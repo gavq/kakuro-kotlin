@@ -1,6 +1,7 @@
 import org.junit.Test
-import java.util.stream.Collectors.toList
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 
 internal class MainKtTest {
@@ -69,6 +70,84 @@ internal class MainKtTest {
             .filter(::allDifferent)
             .toList()
         assertEquals(6, diff.size)
+    }
+
+    @Test
+    fun testTranspose() {
+        val ints = (0..2)
+            .map { i: Int -> (0..3).toList() }
+            .toList()
+        val tr = transpose(ints)
+        assertEquals(ints.size, tr[0].size)
+        assertEquals(ints[0].size, tr.size)
+    }
+
+    @Test
+    fun testValueEquality() {
+        assertEquals(v(), v())
+        assertEquals(v(1, 2), v(1, 2))
+    }
+
+    @Test
+    fun testIsPoss() {
+        val vc = v(1, 2, 3)
+        assertTrue(isPossible(vc, 2))
+        assertFalse(isPossible(vc, 4))
+    }
+
+    @Test
+    fun testTakeWhile() {
+        val result = (0..9).takeWhile{ n -> n < 4 }
+        assertEquals(4, result.size)
+    }
+
+    @Test
+    fun testTakeWhile2() {
+        val result = (0..9).takeWhile{ n -> n < 4 || n > 6 }
+        assertEquals(4, result.size)
+    }
+
+    @Test
+    fun testConcat() {
+        val a = listOf(1, 2, 3)
+        val b = listOf(4, 5, 6, 1, 2, 3)
+        val result = concatLists(a, b)
+        assertEquals(9, result.size)
+    }
+
+    @Test
+    fun testDrop() {
+        val a = listOf(1, 2, 3, 4, 5, 6)
+        val result = a.drop(4)
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun testTake() {
+        val a: List<Int> = listOf(1, 2, 3, 4, 5, 6)
+        val result: List<Int> = a.take(4)
+        assertEquals(4, result.size)
+    }
+
+    @Test
+    fun testPartBy() {
+        val data = listOf(1, 2, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9)
+        val result = partitionBy({ n -> 0 == n % 2 }, data)
+        assertEquals(9, result.size)
+    }
+
+    @Test
+    fun testPartAll() {
+        val data = listOf(1, 2, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9)
+        val result = partitionAll(5, 3, data)
+        assertEquals(5, result.size)
+    }
+
+    @Test
+    fun testPartN() {
+        val data = listOf(1, 2, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9)
+        val result = partitionN(5, data)
+        assertEquals(3, result!!.size)
     }
 
 //    @Test

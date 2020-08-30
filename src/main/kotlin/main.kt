@@ -1,7 +1,3 @@
-import java.util.function.ToIntFunction
-import java.util.stream.Collectors.toList
-
-
 fun pad2(n: Int): String {
     var s = "" + n
     return if (s.length < 2) " $s" else s
@@ -29,41 +25,25 @@ class EmptyCell : ICell {
     }
 }
 
-class DownCell(override val down: Int) : ICell, IDown {
-    override fun toString(): String {
-        return "DownCell[$down]"
-    }
-
+data class DownCell(override val down: Int) : ICell, IDown {
     override fun draw(): String {
         return "   " + pad2(down) + "\\--  "
     }
 }
 
-class AcrossCell(override val across: Int) : ICell, IAcross {
-    override fun toString(): String {
-        return "AcrossCell[$across]"
-    }
-
+data class AcrossCell(override val across: Int) : ICell, IAcross {
     override fun draw(): String {
         return "   --\\" + pad2(across) + "  "
     }
 }
 
-class DownAcrossCell(override val down: Int, override val across: Int) : ICell, IDown, IAcross {
-    override fun toString(): String {
-        return "DownAcrossCell[${down}, ${across}]"
-    }
-
+data class DownAcrossCell(override val down: Int, override val across: Int) : ICell, IDown, IAcross {
     override fun draw(): String {
         return "   " + pad2(down) + "\\" + pad2(across) + "  "
     }
 }
 
-class ValueCell(var values: Set<Int>) : ICell {
-    override fun toString(): String {
-        return "ValueCell[" + values.joinToString(", ") + "]"
-    }
-
+data class ValueCell(var values: Set<Int>) : ICell {
     override fun draw(): String {
         if (1 == values.size) {
             return "     " + values.first() + "    "
@@ -116,8 +96,7 @@ fun <T> product(colls: List<Set<T>>): List<List<T>> {
             val tailProd = product(tail)
             return head.flatMap { x ->
                 tailProd.map { ys -> concatLists(listOf(x), ys) }
-            }
-                .toList()
+            }.toList()
         }
     }
 }
@@ -127,6 +106,43 @@ fun permuteAll(vs: List<ValueCell>, target: Int): List<List<Int>> {
     return product(values)
         .filter { x -> target == x.sum() }
         .toList()
+}
+
+fun isPossible(v: ValueCell, n: Int): Boolean {
+    return v.values.contains(n)
+}
+
+fun <T> transpose(m: List<List<T>>): List<List<T>> {
+    return if (m.isEmpty()) {
+        emptyList()
+    } else {
+        (1..m[0].size)
+            .map { i -> m.map { col -> col[i - 1] }.toList() }
+            .toList()
+    }
+}
+
+fun <T> partitionBy(f: (T) -> Boolean, coll: List<T>): List<List<T>> {
+    return if (coll.isEmpty()) {
+        emptyList()
+    } else {
+        val head = coll[0]
+        val fx = f(head)
+        val group = coll.takeWhile { fx == f(it) }
+        concatLists(listOf(group), partitionBy<T>(f, coll.drop(group.size)))
+    }
+}
+
+fun <T> partitionAll(n: Int, step: Int, coll: List<T>): List<List<T>> {
+    return if (coll.isEmpty()) {
+        emptyList()
+    } else {
+        concatLists(listOf(coll.take(n)), partitionAll(n, step, coll.drop(step)))
+    }
+}
+
+fun <T> partitionN(n: Int, coll: List<T>): List<List<T>?>? {
+    return partitionAll(n, n, coll)
 }
 
 fun main(args: Array<String>) {
