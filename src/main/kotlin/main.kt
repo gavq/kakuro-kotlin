@@ -174,10 +174,6 @@ fun solveGrid(grid: List<List<ICell>>): List<List<ICell>> {
 fun solver(grid: List<List<ICell>>): List<List<ICell>> {
     println(drawGrid(grid))
     val g = solveGrid(grid)
-    return if (g == grid) {
-        g
-    } else {
-        solver(g)
-    }
+    return if (g == grid) g else solver(g)
 }
 
