@@ -56,6 +56,8 @@ fun v() = ValueCell(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
 fun v(vararg args: Int) = ValueCell(args.toSet())
 fun v(args: List<Int>) = ValueCell(args.toSet())
 
+data class SimplePair<T>(val first: T, val second: T)
+
 fun drawRow(row: Collection<ICell>): String {
     return row.map { it.draw() }.joinToString(separator = "", postfix = "\n")
 }
@@ -137,14 +139,14 @@ fun gatherValues(line: List<ICell>): List<List<ICell>> {
     return partitionBy({ it is ValueCell }, line)
 }
 
-fun pairTargetsWithValues(line: List<ICell>): List<Pair<List<ICell>, List<ICell>>> {
+fun pairTargetsWithValues(line: List<ICell>): List<SimplePair<List<ICell>>> {
     return partitionN(2, gatherValues(line))
         .map {
-            Pair(it[0], if (1 == it.size) emptyList() else it[1])
+            SimplePair(it[0], if (1 == it.size) emptyList() else it[1])
         }
 }
 
-fun solvePair(accessor: (ICell) -> Int, pair: Pair<List<ICell>, List<ICell>>): List<ICell> {
+fun solvePair(accessor: (ICell) -> Int, pair: SimplePair<List<ICell>>): List<ICell> {
     val notValueCells = pair.first
     return if (pair.second.isEmpty()) {
         notValueCells

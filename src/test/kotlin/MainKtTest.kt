@@ -67,15 +67,12 @@ internal class MainKtTest {
         assertEquals(10, results.size)
         val diff = results
             .filter(::allDifferent)
-            .toList()
         assertEquals(6, diff.size)
     }
 
     @Test
     fun testTranspose() {
-        val ints = (0..2)
-            .map { i: Int -> (0..3).toList() }
-            .toList()
+        val ints = (0..2).map { (0..3).toList() }
         val tr = transpose(ints)
         assertEquals(ints.size, tr[0].size)
         assertEquals(ints[0].size, tr.size)
@@ -96,13 +93,13 @@ internal class MainKtTest {
 
     @Test
     fun testTakeWhile() {
-        val result = (0..9).takeWhile{ n -> n < 4 }
+        val result = (0..9).takeWhile { n -> n < 4 }
         assertEquals(4, result.size)
     }
 
     @Test
     fun testTakeWhile2() {
-        val result = (0..9).takeWhile{ n -> n < 4 || n > 6 }
+        val result = (0..9).takeWhile { n -> n < 4 || n > 6 }
         assertEquals(4, result.size)
     }
 
@@ -116,15 +113,15 @@ internal class MainKtTest {
 
     @Test
     fun testDrop() {
-        val a = listOf(1, 2, 3, 4, 5, 6)
+        val a = (1..6).toList()
         val result = a.drop(4)
         assertEquals(2, result.size)
     }
 
     @Test
     fun testTake() {
-        val a: List<Int> = listOf(1, 2, 3, 4, 5, 6)
-        val result: List<Int> = a.take(4)
+        val a = (1..6).toList()
+        val result = a.take(4)
         assertEquals(4, result.size)
     }
 
