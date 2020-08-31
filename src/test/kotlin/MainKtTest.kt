@@ -230,7 +230,7 @@ internal class MainKtTest {
             listOf(a(9), v(), v(), a(6), v(), v()),
             listOf(a(15), v(), v(), a(12), v(), v())
         )
-        assertTrue(gridEquals(grid1, grid2))
+        assertEquals(grid1, grid2)
     }
 
     @Test
@@ -250,7 +250,7 @@ internal class MainKtTest {
             listOf(e(), da(17, 23), v(), v(), v(), d(14)),
             listOf(a(15), v(), v(), a(12), v(), v())
         )
-        assertFalse(gridEquals(grid1, grid2))
+        assertFalse(grid1 == grid2)
     }
 
     @Test
@@ -271,7 +271,7 @@ internal class MainKtTest {
             listOf(a(9), v(), v(), a(6), v(), v()),
             listOf(a(15), v(), v(), a(12), v(), v())
         )
-        assertFalse(gridEquals(grid1, grid2))
+        assertFalse(grid1 == grid2)
     }
 
     @Test
