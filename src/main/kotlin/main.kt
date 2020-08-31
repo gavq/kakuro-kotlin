@@ -23,21 +23,21 @@ object EmptyCell : ICell {
 }
 
 data class DownCell(override val down: Int) : ICell, IDown {
-    override fun draw() = "   " + pad2(down) + "\\--  "
+    override fun draw() = "   ${pad2(down)}\\--  "
 }
 
 data class AcrossCell(override val across: Int) : ICell, IAcross {
-    override fun draw() = "   --\\" + pad2(across) + "  "
+    override fun draw() = "   --\\${pad2(across)}  "
 }
 
 data class DownAcrossCell(override val down: Int, override val across: Int) : ICell, IDown, IAcross {
-    override fun draw() = "   " + pad2(down) + "\\" + pad2(across) + "  "
+    override fun draw() = "   ${pad2(down)}\\${pad2(across)}  "
 }
 
 data class ValueCell(val values: Set<Int>) : ICell {
     override fun draw(): String {
         return if (1 == values.size) {
-            "     " + values.first() + "    "
+            "     ${values.first()}    "
         } else {
             (1..9)
                 .map { drawOneValue(it) }
@@ -45,7 +45,9 @@ data class ValueCell(val values: Set<Int>) : ICell {
         }
     }
 
-    private fun drawOneValue(it: Int) = if (it in values) "" + it else "."
+    fun isPossible(n: Int) = values.contains(n)
+
+    private fun drawOneValue(it: Int) = if (it in values) "$it" else "."
 }
 
 fun da(d: Int, a: Int) = DownAcrossCell(d, a)
@@ -93,10 +95,6 @@ fun permuteAll(vs: List<ValueCell>, target: Int): List<List<Int>> {
         .filter { target == it.sum() }
 }
 
-fun isPossible(v: ValueCell, n: Int): Boolean {
-    return v.values.contains(n)
-}
-
 fun <T> transpose(m: List<List<T>>): List<List<T>> {
     return if (m.isEmpty()) {
         emptyList()
@@ -130,7 +128,7 @@ fun <T> partitionN(n: Int, coll: List<T>): List<List<T>> = partitionAll(n, n, co
 fun solveStep(cells: List<ValueCell>, total: Int): List<ValueCell> {
     val finalIndex = cells.size - 1
     val perms = permuteAll(cells, total)
-        .filter { isPossible(cells.last(), it[finalIndex]) }
+        .filter { cells.last().isPossible(it[finalIndex]) }
         .filter { allDifferent(it) }
     return transpose(perms).map { v(it) }
 }
